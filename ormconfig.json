@@ -4,7 +4,7 @@
    "port": 3306,
    "username": "root",
    "password": "keysecret",
-   "database": "nodemysql",
+   "database": "prueba",
    "synchronize": true,
    "logging": false,
    "entities": [

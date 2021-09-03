@@ -5,6 +5,12 @@ const router = Router();
 
 router.post("/login", AuthController.login);
 
-router.post('/changePassword',[checkJwt],AuthController.changePassword);
+router.put("/forgotPassword", AuthController.forgotPassword);
+
+router.put("/newPassword", AuthController.createNewPassword);
+
+router.post("/changePassword", [checkJwt], AuthController.changePassword);
+
+router.post("/refreshToken", [checkJwt], AuthController.refreshToken);
 
 export default router;

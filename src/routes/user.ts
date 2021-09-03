@@ -5,18 +5,22 @@ import { checkJwt } from "./../middleware/jwt";
 const router = Router();
 
 // get all users
-router.get("/",[checkJwt], UserController.getAll);
+router.get("/", [checkJwt], UserController.getAll);
 
 // get one user
-router.get("/:id", [checkJwt, checkRole(['user'])],  UserController.getById);
+router.get("/:id", [checkJwt, checkRole(["user"])], UserController.getById);
 
 // create user
-router.post("/", UserController.newUser);
+router.post("/", [checkJwt, checkRole(["admin"])], UserController.newUser);
 
 //edit user
-router.patch("/:id",[checkJwt, checkRole(['admin'])], UserController.editUser);
+router.patch("/:id", [checkJwt, checkRole(["admin"])], UserController.editUser);
 
 // delete user
-router.delete("/:id",[checkJwt, checkRole(['admin'])], UserController.deleteUser);
+router.delete(
+  "/:id",
+  [checkJwt, checkRole(["admin"])],
+  UserController.deleteUser
+);
 
 export default router;

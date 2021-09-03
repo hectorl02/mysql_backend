@@ -9,15 +9,15 @@ export class UserController {
     const userRepository = getRepository(User);
     let users;
     try {
-       users = await userRepository.find();
+      users = await userRepository.find();
     } catch (error) {
-      res.status(404).json({ message: "NO hallado" });
+      res.status(404).json({ message: "No hallados" });
     }
 
     if (users.length > 0) {
       res.send(users);
     } else {
-      res.status(404).json({ message: "NO hallado" });
+      res.status(404).json({ message: "No hallados" });
     }
   };
 
@@ -33,15 +33,25 @@ export class UserController {
   };
 
   static newUser = async (req: Request, res: Response) => {
-    const { username, password, role } = req.body;
+    const { username, password, role, refreshToken, resetToken } = req.body;
 
     const user = new User();
+
+    if (user.resetToken === "") {
+      user.resetToken = " ";
+    }
+
+    if (user.refreshToken === "") {
+      user.refreshToken = " ";
+    }
 
     user.username = username;
     user.password = password;
     user.role = role;
 
-    const errors = await validate(user,{validationError:{target:false, value:false}});
+    const errors = await validate(user, {
+      validationError: { target: false, value: false },
+    });
     if (errors.length > 0) {
       return res.status(400).json(errors);
     }
@@ -53,10 +63,10 @@ export class UserController {
       user.hashPassword();
       await userRepository.save(user);
     } catch (error) {
-      return res.status(409).json({ message: "Usuario ya existe" });
+      return res.status(409).json({ message: "Us ya existe", error });
     }
 
-    res.send("usuario creado");
+    res.send("Us creado");
   };
 
   static editUser = async (req: Request, res: Response) => {
@@ -71,10 +81,12 @@ export class UserController {
       user.username = username;
       user.role = role;
     } catch (error) {
-      return res.status(404).json({ message: "Usuario no hallado" });
+      return res.status(404).json({ message: "Us no hallado" });
     }
 
-    const errors = await validate(user,{validationError:{target:false, value:false}});
+    const errors = await validate(user, {
+      validationError: { target: false, value: false },
+    });
 
     if (errors.length > 0) {
       return res.status(400).json(errors);
@@ -83,9 +95,9 @@ export class UserController {
     try {
       await userRepository.save(user);
     } catch (error) {
-      return res.status(409).json({ message: "usuario esta usado por otro" });
+      return res.status(409).json({ message: "Us esta usado" });
     }
-    res.status(201).json({ message: "Usuario modificado" });
+    res.status(201).json({ message: "Us modificado" });
   };
 
   static deleteUser = async (req: Request, res: Response) => {
@@ -96,11 +108,11 @@ export class UserController {
     try {
       user = await userRepository.findOneOrFail(id);
     } catch (error) {
-      return res.status(404).json({ message: "usuario no hallado" });
+      return res.status(404).json({ message: "Us no hallado" });
     }
 
     userRepository.delete(id);
-    res.status(201).json({ message: "Usuario borrado" });
+    res.status(201).json({ message: "Us borrado" });
   };
 }
 
